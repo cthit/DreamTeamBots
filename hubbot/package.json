@@ -1,0 +1,13 @@
+{
+  "name": "hubbot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "irc": "~0.4.1",
+    "request": "~2.69.0"
+  }
+}
