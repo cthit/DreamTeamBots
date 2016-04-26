@@ -1,0 +1,697 @@
+[{
+  "user_id": "andresa",
+  "nick": "Tejp",
+  "total_time": 1091743,
+  "score": 18195,
+  "active": false
+}, {
+  "user_id": "johandf",
+  "nick": "Horv",
+  "total_time": 792230,
+  "score": 13203,
+  "active": true
+}, {
+  "user_id": "jaxing",
+  "nick": "Jax",
+  "total_time": 746644,
+  "score": 12444,
+  "active": false
+}, {
+  "user_id": "vicni",
+  "nick": "Trivoc",
+  "total_time": 662379,
+  "score": 11039,
+  "active": true
+}, {
+  "user_id": "matsho",
+  "nick": "Mad Mats",
+  "total_time": 649961,
+  "score": 10832,
+  "active": false
+}, {
+  "user_id": "bjugard",
+  "nick": "rekoil",
+  "total_time": 595671,
+  "score": 9927,
+  "active": false
+}, {
+  "user_id": "vidare",
+  "nick": "vidare",
+  "total_time": 554013,
+  "score": 9233,
+  "active": false
+}, {
+  "user_id": "jonthu",
+  "nick": "Big Tuna",
+  "total_time": 470305,
+  "score": 7838,
+  "active": false
+}, {
+  "user_id": "malmpo",
+  "nick": "Malm",
+  "total_time": 433556,
+  "score": 7225,
+  "active": false
+}, {
+  "user_id": "gujoel",
+  "nick": "Kalior",
+  "total_time": 432076,
+  "score": 7201,
+  "active": false
+}, {
+  "user_id": "lageb",
+  "nick": "Leigh",
+  "total_time": 416714,
+  "score": 6945,
+  "active": false
+}, {
+  "user_id": "gaband",
+  "nick": "krabban",
+  "total_time": 327292,
+  "score": 5454,
+  "active": true
+}, {
+  "user_id": "luum",
+  "nick": "Tingeling",
+  "total_time": 323906,
+  "score": 5398,
+  "active": false
+}, {
+  "user_id": "katberg",
+  "nick": "Lovre",
+  "total_time": 313285,
+  "score": 5221,
+  "active": false
+}, {
+  "user_id": "risfelt",
+  "nick": "Fredokin",
+  "total_time": 305749,
+  "score": 5095,
+  "active": false
+}, {
+  "user_id": "jolinds",
+  "nick": "Ndushi",
+  "total_time": 299812,
+  "score": 4996,
+  "active": false
+}, {
+  "user_id": "nilsenm",
+  "nick": "Kerp",
+  "total_time": 293067,
+  "score": 4884,
+  "active": false
+}, {
+  "user_id": "oskarru",
+  "nick": "RutAn",
+  "total_time": 286631,
+  "score": 4777,
+  "active": false
+}, {
+  "user_id": "erikarlk",
+  "nick": "Superik",
+  "total_time": 249484,
+  "score": 4158,
+  "active": false
+}, {
+  "user_id": "simsund",
+  "nick": "Sune",
+  "total_time": 248339,
+  "score": 4138,
+  "active": false
+}, {
+  "user_id": "joelto",
+  "nick": "oed",
+  "total_time": 242489,
+  "score": 4041,
+  "active": true
+}, {
+  "user_id": "emiled",
+  "nick": "Eda",
+  "total_time": 238953,
+  "score": 3982,
+  "active": false
+}, {
+  "user_id": "oscarmu",
+  "nick": "Princess",
+  "total_time": 223086,
+  "score": 3718,
+  "active": true
+}, {
+  "user_id": "mikmal",
+  "nick": "Laxen",
+  "total_time": 221087,
+  "score": 3684,
+  "active": false
+}, {
+  "user_id": "henryy",
+  "nick": "XiaoMing",
+  "total_time": 216605,
+  "score": 3610,
+  "active": false
+}, {
+  "user_id": "hannesp",
+  "nick": "Maskines",
+  "total_time": 212248,
+  "score": 3537,
+  "active": false
+}, {
+  "user_id": "hjortr",
+  "nick": "Hjort",
+  "total_time": 206039,
+  "score": 3433,
+  "active": false
+}, {
+  "user_id": "frejk",
+  "nick": "Frej",
+  "total_time": 205215,
+  "score": 3420,
+  "active": false
+}, {
+  "user_id": "anderlan",
+  "nick": "fishur",
+  "total_time": 203172,
+  "score": 3386,
+  "active": false
+}, {
+  "user_id": "wildahl",
+  "nick": "golvmopp",
+  "total_time": 196019,
+  "score": 3266,
+  "active": false
+}, {
+  "user_id": "hebjorn",
+  "nick": "Urza",
+  "total_time": 191663,
+  "score": 3194,
+  "active": true
+}, {
+  "user_id": "eludvig",
+  "nick": "Løke",
+  "total_time": 189240,
+  "score": 3154,
+  "active": false
+}, {
+  "user_id": "thestu",
+  "nick": "TThera",
+  "total_time": 177244,
+  "score": 2954,
+  "active": false
+}, {
+  "user_id": "jeslinds",
+  "nick": "jeeppson",
+  "total_time": 160642,
+  "score": 2677,
+  "active": false
+}, {
+  "user_id": "hkevin",
+  "nick": "Kritt",
+  "total_time": 152320,
+  "score": 2538,
+  "active": false
+}, {
+  "user_id": "chraker",
+  "nick": "Ciff",
+  "total_time": 147131,
+  "score": 2452,
+  "active": true
+}, {
+  "user_id": "samhak",
+  "nick": "Sawmill",
+  "total_time": 143888,
+  "score": 2398,
+  "active": false
+}, {
+  "user_id": "lovisaj",
+  "nick": "Lovis",
+  "total_time": 143304,
+  "score": 2388,
+  "active": false
+}, {
+  "user_id": "adaandr",
+  "nick": "neva",
+  "total_time": 135400,
+  "score": 2256,
+  "active": false
+}, {
+  "user_id": "happonen",
+  "nick": "Maijsan",
+  "total_time": 128532,
+  "score": 2142,
+  "active": false
+}, {
+  "user_id": "ponerik",
+  "nick": "Bondi",
+  "total_time": 126979,
+  "score": 2116,
+  "active": false
+}, {
+  "user_id": "sedvard",
+  "nick": "brød",
+  "total_time": 119835,
+  "score": 1997,
+  "active": true
+}, {
+  "user_id": "oherik",
+  "nick": "Öhrnie",
+  "total_time": 119678,
+  "score": 1994,
+  "active": false
+}, {
+  "user_id": "danein",
+  "nick": "Eineving",
+  "total_time": 110770,
+  "score": 1846,
+  "active": false
+}, {
+  "user_id": "mirban",
+  "nick": "Dumle",
+  "total_time": 108835,
+  "score": 1813,
+  "active": false
+}, {
+  "user_id": "oskarwi",
+  "nick": "Owe",
+  "total_time": 104411,
+  "score": 1740,
+  "active": false
+}, {
+  "user_id": "daoskar",
+  "nick": "PJ",
+  "total_time": 103387,
+  "score": 1723,
+  "active": true
+}, {
+  "user_id": "freb",
+  "nick": "Tandlös",
+  "total_time": 102043,
+  "score": 1700,
+  "active": false
+}, {
+  "user_id": "micsod",
+  "nick": "Mono",
+  "total_time": 101437,
+  "score": 1690,
+  "active": false
+}, {
+  "user_id": "ulrikau",
+  "nick": "Dice",
+  "total_time": 100641,
+  "score": 1677,
+  "active": false
+}, {
+  "user_id": "jivar",
+  "nick": "Cannonbait",
+  "total_time": 96551,
+  "score": 1609,
+  "active": false
+}, {
+  "user_id": "nyoskar",
+  "nick": "Rascal",
+  "total_time": 95799,
+  "score": 1596,
+  "active": false
+}, {
+  "user_id": "francine",
+  "nick": "Antiloop",
+  "total_time": 92838,
+  "score": 1547,
+  "active": false
+}, {
+  "user_id": "martinni",
+  "nick": "Pessimus",
+  "total_time": 92771,
+  "score": 1546,
+  "active": false
+}, {
+  "user_id": "thunef",
+  "nick": "Asfalt",
+  "total_time": 91953,
+  "score": 1532,
+  "active": false
+}, {
+  "user_id": "franton",
+  "nick": "Fröjd",
+  "total_time": 91679,
+  "score": 1527,
+  "active": true
+}, {
+  "user_id": "pmarkus",
+  "nick": "_us",
+  "total_time": 90709,
+  "score": 1511,
+  "active": false
+}, {
+  "user_id": "mlonn",
+  "nick": "Zebra",
+  "total_time": 87718,
+  "score": 1461,
+  "active": false
+}, {
+  "user_id": "randevik",
+  "nick": "Rund",
+  "total_time": 83871,
+  "score": 1397,
+  "active": false
+}, {
+  "user_id": "erikax",
+  "nick": "bark",
+  "total_time": 81849,
+  "score": 1364,
+  "active": false
+}, {
+  "user_id": "josandr",
+  "nick": "Juice",
+  "total_time": 76091,
+  "score": 1268,
+  "active": false
+}, {
+  "user_id": "gmaxim",
+  "nick": "Maxim",
+  "total_time": 76075,
+  "score": 1267,
+  "active": false
+}, {
+  "user_id": "rfinne",
+  "nick": "Beccis",
+  "total_time": 75102,
+  "score": 1251,
+  "active": false
+}, {
+  "user_id": "oscarev",
+  "nick": "Oscmage",
+  "total_time": 73909,
+  "score": 1231,
+  "active": false
+}, {
+  "user_id": "oskarje",
+  "nick": "Vilddjur",
+  "total_time": 68224,
+  "score": 1137,
+  "active": false
+}, {
+  "user_id": "jespolss",
+  "nick": "Kakan",
+  "total_time": 67502,
+  "score": 1125,
+  "active": false
+}, {
+  "user_id": "almao",
+  "nick": "Pippin",
+  "total_time": 64087,
+  "score": 1068,
+  "active": false
+}, {
+  "user_id": "ericsh",
+  "nick": "Shaotime",
+  "total_time": 61867,
+  "score": 1031,
+  "active": false
+}, {
+  "user_id": "norlins",
+  "nick": "Basse",
+  "total_time": 61546,
+  "score": 1025,
+  "active": false
+}, {
+  "user_id": "sofiaed",
+  "nick": "terrorulf",
+  "total_time": 61400,
+  "score": 1023,
+  "active": false
+}, {
+  "user_id": "johandi",
+  "nick": "Kruken",
+  "total_time": 58549,
+  "score": 975,
+  "active": false
+}, {
+  "user_id": "maglars",
+  "nick": "Micro",
+  "total_time": 58273,
+  "score": 971,
+  "active": false
+}, {
+  "user_id": "annanyl",
+  "nick": "Chikki",
+  "total_time": 58012,
+  "score": 966,
+  "active": false
+}, {
+  "user_id": "patol",
+  "nick": "Pat",
+  "total_time": 56754,
+  "score": 945,
+  "active": false
+}, {
+  "user_id": "sabsam",
+  "nick": "Sabbe",
+  "total_time": 55914,
+  "score": 931,
+  "active": false
+}, {
+  "user_id": "johnand",
+  "nick": "Ares",
+  "total_time": 53834,
+  "score": 897,
+  "active": false
+}, {
+  "user_id": "inat",
+  "nick": "Chess",
+  "total_time": 52582,
+  "score": 876,
+  "active": false
+}, {
+  "user_id": "hultner",
+  "nick": "Hult↓",
+  "total_time": 52524,
+  "score": 875,
+  "active": false
+}, {
+  "user_id": "phoohad",
+  "nick": "Anno",
+  "total_time": 44779,
+  "score": 746,
+  "active": false
+}, {
+  "user_id": "arvbjo",
+  "nick": "Alle",
+  "total_time": 38155,
+  "score": 635,
+  "active": false
+}, {
+  "user_id": "illiped",
+  "nick": "Daaale",
+  "total_time": 37977,
+  "score": 632,
+  "active": false
+}, {
+  "user_id": "jkrook",
+  "nick": "Krook",
+  "total_time": 34435,
+  "score": 573,
+  "active": false
+}, {
+  "user_id": "joaohl",
+  "nick": "JaoK",
+  "total_time": 34150,
+  "score": 569,
+  "active": false
+}, {
+  "user_id": "hedmanw",
+  "nick": "Heissman",
+  "total_time": 32645,
+  "score": 544,
+  "active": false
+}, {
+  "user_id": "jakhol",
+  "nick": "Holmus",
+  "total_time": 32245,
+  "score": 537,
+  "active": false
+}, {
+  "user_id": "iversen",
+  "nick": "iVersen",
+  "total_time": 31779,
+  "score": 529,
+  "active": false
+}, {
+  "user_id": "myrholm",
+  "nick": "Glaz",
+  "total_time": 30785,
+  "score": 513,
+  "active": false
+}, {
+  "user_id": "stinawe",
+  "nick": "werme",
+  "total_time": 30415,
+  "score": 506,
+  "active": false
+}, {
+  "user_id": "jmag",
+  "nick": "Jühan",
+  "total_time": 25286,
+  "score": 421,
+  "active": false
+}, {
+  "user_id": "mooss",
+  "nick": "Si",
+  "total_time": 25155,
+  "score": 419,
+  "active": false
+}, {
+  "user_id": "karelq",
+  "nick": "Danceit",
+  "total_time": 21915,
+  "score": 365,
+  "active": false
+}, {
+  "user_id": "adrlin",
+  "nick": "staffan",
+  "total_time": 21868,
+  "score": 364,
+  "active": false
+}, {
+  "user_id": "elinlj",
+  "nick": "Ljungan",
+  "total_time": 21446,
+  "score": 357,
+  "active": false
+}, {
+  "user_id": "guemma",
+  "nick": "ems",
+  "total_time": 21020,
+  "score": 350,
+  "active": false
+}, {
+  "user_id": "alehak",
+  "nick": "Crash",
+  "total_time": 20580,
+  "score": 343,
+  "active": false
+}, {
+  "user_id": "pjack",
+  "nick": "weeeeeew",
+  "total_time": 20481,
+  "score": 341,
+  "active": false
+}, {
+  "user_id": "nikjonss",
+  "nick": "PK",
+  "total_time": 19228,
+  "score": 320,
+  "active": false
+}, {
+  "user_id": "joapers",
+  "nick": "jocke",
+  "total_time": 16211,
+  "score": 270,
+  "active": false
+}, {
+  "user_id": "lislar",
+  "nick": "spiderman",
+  "total_time": 15544,
+  "score": 259,
+  "active": false
+}, {
+  "user_id": "felixja",
+  "nick": "Lisch",
+  "total_time": 14742,
+  "score": 245,
+  "active": false
+}, {
+  "user_id": "baderk",
+  "nick": "Morpheus",
+  "total_time": 14097,
+  "score": 234,
+  "active": false
+}, {
+  "user_id": "danhes",
+  "nick": "Karbin",
+  "total_time": 13360,
+  "score": 222,
+  "active": false
+}, {
+  "user_id": "josulf",
+  "nick": "Yuna",
+  "total_time": 12806,
+  "score": 213,
+  "active": false
+}, {
+  "user_id": "hamrons",
+  "nick": "ClausX",
+  "total_time": 11894,
+  "score": 198,
+  "active": false
+}, {
+  "user_id": "fridenm",
+  "nick": "friden",
+  "total_time": 11876,
+  "score": 197,
+  "active": false
+}, {
+  "user_id": "marnybe",
+  "nick": "Inka",
+  "total_time": 11454,
+  "score": 190,
+  "active": false
+}, {
+  "user_id": "kkim",
+  "nick": "kimkling",
+  "total_time": 8909,
+  "score": 148,
+  "active": false
+}, {
+  "user_id": "amilan",
+  "nick": "Miles",
+  "total_time": 8788,
+  "score": 146,
+  "active": false
+}, {
+  "user_id": "farhand",
+  "nick": "Puzzel",
+  "total_time": 8177,
+  "score": 136,
+  "active": false
+}, {
+  "user_id": "patrican",
+  "nick": "PATA",
+  "total_time": 8111,
+  "score": 135,
+  "active": false
+}, {
+  "user_id": "wmax",
+  "nick": "iMax",
+  "total_time": 7273,
+  "score": 121,
+  "active": false
+}, {
+  "user_id": "johljung",
+  "nick": "Flugan",
+  "total_time": 5256,
+  "score": 87,
+  "active": false
+}, {
+  "user_id": "joathore",
+  "nick": "Kuxe",
+  "total_time": 2245,
+  "score": 37,
+  "active": false
+}, {
+  "user_id": "nadi",
+  "nick": "Soya",
+  "total_time": 2109,
+  "score": 35,
+  "active": false
+}, {
+  "user_id": "enfelix",
+  "nick": "Ängel",
+  "total_time": 983,
+  "score": 16,
+  "active": false
+}, {
+  "user_id": "sebnils",
+  "nick": "Bazil",
+  "total_time": 631,
+  "score": 10,
+  "active": false
+}]

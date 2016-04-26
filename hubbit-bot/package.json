@@ -1,0 +1,11 @@
+{
+	"name": "HubbIT_crawler_bot",
+	"version": "0.0.1",
+	"private": true,
+	"description": "IRC bot that keeps track of changes in Chalmers IT section's \"who is in the hub\" toplist",
+	"dependencies": {
+		"request": "*",
+		"irc": "*",
+		"moment": "*"
+	}
+}
