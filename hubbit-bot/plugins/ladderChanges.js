@@ -7,30 +7,30 @@ module.exports = function (pluginManager, config) {
 
   manager.on('request', function (response) {
     var ladderChanges = [];
+    var newUsers = {};
     var users = memory.get('previousStats') || {};
     var data;
 
     try {
       data = JSON.parse(response);
     } catch (error) {
-      bot.say('jeeppson jag har kraschat - fyll i ny auth cookie ASAP! :(');
+      bot.say('jeeppson jag har kraschat, hjälp!');
       return console.error('Failed to parse JSON (invalid auth token?)');
     }
 
-    var newUsers = {};
-
     for (var i in data) {
       // Check if the old position differs from the new position
-      if (users && users[data[i].nick] && users[data[i].nick].position != i) {
+      if (users && users[data[i].user_id] && users[data[i].user_id].position != i) {
         ladderChanges.push({
-          from: users[data[i].nick].position,
+          from: users[data[i].user_id].position,
           to: i,
-          totalTime: data[i].total_time
+          totalTime: data[i].total_time,
+          nick: data[i].nick
         });
       }
 
       // Change the position in the store
-      newUsers[data[i].nick] = {
+      newUsers[data[i].user_id] = {
         position: i,
         active: data[i].active
       };
@@ -65,7 +65,10 @@ module.exports = function (pluginManager, config) {
         var positionFrom = entry.from + 1;
         var positionTo = entry.to + 1;
 
-        bot.say(you + " passed " + other + " (from #" + positionFrom + " to #" + positionTo + " - " + hours + "h).");
+        var yourNick = users[you].nick;
+        var othersNick = users[other].nick;
+
+        bot.say(yourNick + " passed " + othersNick + " (from #" + positionFrom + " to #" + positionTo + " - " + hours + "h).");
       }
     });
   });
