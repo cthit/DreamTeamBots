@@ -32,7 +32,8 @@ module.exports = function (pluginManager, config) {
       // Change the position in the store
       newUsers[data[i].user_id] = {
         position: i,
-        active: data[i].active
+        active: data[i].active,
+        nick: data[i].nick
       };
     }
 
