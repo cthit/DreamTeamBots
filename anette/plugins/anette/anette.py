@@ -87,11 +87,21 @@ class Anette(plugin.Plugin):
         channels = self.settings.get(server).get('channelstowatch')
         self.channels_watching = channels
         self._setup_db(server)
+        self._load_gamle(server)
         for chan in channels:
             self.join(server, chan)
 
         logging.info("Registered and ready")
         self.is_ready = True
+
+    def _load_gamle(self, server):
+        try:
+            file = open(self.settings.get(server).get('gamlefile'), 'r')
+            wrapper = self.db_wrapper.get(server)
+            for l in file:
+                wrapper.add_gamle(l.strip())
+        except Exception as e:
+            logging.error("Failed to load gamlefile: " + self.settings.get(server).get('gamlefile'))
 
     def _setup_db(self, server):
         logging.info("Setup DB for: " + server)
