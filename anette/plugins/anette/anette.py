@@ -15,6 +15,8 @@ class Anette(plugin.Plugin):
         self.is_ready = False
         self.channel_modes = {}
         self.db_wrapper = {}
+        self.nick = 'Anette'
+        self.channels_pending_user_for_voicing = []
 
     def _nick(self, target):
         return target.split('!')[0]
@@ -37,8 +39,7 @@ class Anette(plugin.Plugin):
         self.channel_modes[server][channel] = channel_modes
 
     def on_mode(self, server, source, channel, modes, target):
-        target = target.lower()
-        if target == self.name:
+        if target == self.nick:
             self._add_channel_modes(server, channel, modes)
         elif '-v' in modes:
             self._person_devoiced(server, target)
@@ -52,8 +53,8 @@ class Anette(plugin.Plugin):
         if not self.is_ready:
             return
 
-        source_nick = self._nick(source).lower()
-        if (not self.name == source_nick) and channel in self.channels_watching:
+        source_nick = self._nick(source)
+        if (not self.nick == source_nick) and channel in self.channels_watching:
             self._new_join(server, source_nick, channel)
 
     def _is_nollan(self, server, nick):
@@ -90,8 +91,8 @@ class Anette(plugin.Plugin):
         else:
             return False
 
-    def _voice(self, server, target_nick, channel):
-        self.mode(server, channel, '+v ' + target_nick)
+    def _voice(self, server, target, channel):
+        self.mode(server, channel, '+v ' + target)
 
     def _registered(self, server):
         channels = self.settings.get(server).get('channelstowatch')
@@ -127,8 +128,42 @@ class Anette(plugin.Plugin):
             logging.info('DB wrapper initiated')
 
     def on_umode(self, server, source, target, modes):
+        logging.info('on_umode: ' + modes)
         if modes == '+r':
             self._registered(server)
+
+    def on_mode(self, server, source, channel, modes, target):
+        if target == self.nick:
+            if modes == '+h':
+                self._voice_previously_unvoiced_nollan(server, channel)
+
+    def _voice_previously_unvoiced_nollan(self, server, channel):
+        logging.info('_voice_previously_unvoiced_nollan ' + channel)
+        self.channels_pending_user_for_voicing.append(channel)
+        self.names(server, channel)
+
+    def on_namreply(self, server, source, target, op, channel, names_with_modes):
+        logging.info("on_names:" + channel)
+        names = [self._strip_nick_of_mode(n.strip())
+                 for n in names_with_modes.split(" ")
+                 if len(n.strip()) > 0]
+        logging.info(names)
+
+        try:
+            self.channels_pending_user_for_voicing.remove(channel)
+        except ValueError as e:
+            pass
+
+        for nick in names:
+            if nick != self.nick and self._is_nollan(server, nick):
+                self._voice(server, nick, channel)
+
+    def _strip_nick_of_mode(self, nick):
+        for m in ['+', '%', '@', '&', '~']:
+            if nick.startswith(m):
+                return nick[1:]
+
+        return nick
 
     def _strip_msg_of_prefix(self, msg, prefix):
         return msg[len(prefix):].strip()
