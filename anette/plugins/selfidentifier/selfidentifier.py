@@ -7,7 +7,7 @@ import plugin
 class SelfIdentifier(plugin.Plugin):
 
     def __init__(self):
-        plugin.Plugin.__init__(self, "SelfIdentifier")
+        plugin.Plugin.__init__(self, "selfidentifier")
         self.settings = {}
         self.is_registering = False
         self.modes = []
@@ -41,10 +41,6 @@ class SelfIdentifier(plugin.Plugin):
 
     def _registered(self, server):
         self.is_registering = False
-        channels = self.settings.get(server).get('channelstowatch')
-        self.channels_watching = channels
-        for chan in channels:
-            self.join(server, chan)
 
     def on_umode(self, server, source, target, modes):
         if modes == '+r':

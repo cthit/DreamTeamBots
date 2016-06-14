@@ -12,9 +12,7 @@ class Anette(plugin.Plugin):
     def __init__(self):
         plugin.Plugin.__init__(self, "anette")
         self.settings = {}
-        self.is_registering = False
         self.is_ready = False
-        self.modes = []
         self.channel_modes = {}
         self.db_wrapper = {}
 
@@ -26,10 +24,6 @@ class Anette(plugin.Plugin):
 
     def on_welcome(self, server, source, target, message):
         self.channel_modes[server] = {}
-        if server in self.settings:
-            auth = self.settings.get(server).get("auth")
-            self.is_registering = True
-            self.privmsg(server, auth.get("target"), 'identify ' + auth.get('pass'))
 
     def _add_channel_modes(self, server, channel, modes):
         channel_modes = self.channel_modes.get(server).get(channel, [])
@@ -100,7 +94,6 @@ class Anette(plugin.Plugin):
         self.mode(server, channel, '+v ' + target_nick)
 
     def _registered(self, server):
-        self.is_registering = False
         channels = self.settings.get(server).get('channelstowatch')
         self.channels_watching = channels
         self._setup_db(server)
@@ -137,21 +130,12 @@ class Anette(plugin.Plugin):
         if modes == '+r':
             self._registered(server)
 
-        if modes.startswith('+'):
-            for m in modes[1:]:
-                self.modes.append(m)
-        elif modes.startswith('-'):
-            for m in modes[1:]:
-                self.modes.remove(m)
-
     def _strip_msg_of_prefix(self, msg, prefix):
         return msg[len(prefix):].strip()
 
     def on_privmsg(self, server, source, target, message):
         message = message.lower()
-        if message == 'modes':
-            self.send_modes(server, source)
-        elif message.startswith('subscribe status'):
+        if message.startswith('subscribe status'):
             self._subscribe_status(server, source, target, self._strip_msg_of_prefix(message, 'subscribe status'))
         elif message.startswith('subscribe mode'):
             self._subscribe_mode(server, source, target, self._strip_msg_of_prefix(message, 'subscribe mode'))
@@ -182,10 +166,6 @@ class Anette(plugin.Plugin):
                 self.privmsg(server, target_nick, 'Updated modes, now: ' + str(subscriber.modes))
             else:
                 self.privmsg(server, target_nick, error_msg)
-
-    def send_modes(self, server, target):
-        self.privmsg(server, self._nick(target), str(self.modes))
-        self.privmsg(server, self._nick(target), str(self.channel_modes))
 
 
 if __name__ == "__main__":
