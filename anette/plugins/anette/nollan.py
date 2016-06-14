@@ -21,6 +21,7 @@ class Nollan(object):
         nollan.last_seen = dict.get('last_seen')
         nollan.first_seen = dict.get('first_seen')
         nollan.fake = dict.get('fake')
+        nollan.eid = dict.eid
 
         return nollan
 

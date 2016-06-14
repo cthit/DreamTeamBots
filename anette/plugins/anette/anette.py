@@ -5,7 +5,7 @@ import plugin
 from tinydb import TinyDB
 from dbwrapper import DBWrapper
 from nollan import Nollan
-
+from subscriber import Subscriber
 
 class Anette(plugin.Plugin):
 
@@ -72,12 +72,29 @@ class Anette(plugin.Plugin):
     def _new_join(self, server, source_nick, channel):
         if self._is_nollan(server, source_nick):
             self._voice(server, source_nick, channel)
-            self._check_if_new_and_if_so_add(server, source_nick)
+            is_new = self._check_if_new_and_if_so_add(server, source_nick)
+            self._notify_subscribers(server, source_nick, is_new)
+
+    def _notify_subscribers(self, server, nick, is_new):
+        subscriber_status = Subscriber.ON if is_new else Subscriber.ALL
+        wrapper = self.db_wrapper.get(server)
+        subscribers = wrapper.find_subscribers_with_status(subscriber_status)
+        msg = nick + ' joined.'
+        for subscriber in subscribers:
+            self._notify(server, subscriber, msg)
+            logging.info(msg + ' sent to ' + subscriber.nick)
+
+    def _notify(self, server, subscriber, msg):
+        if Subscriber.QUERY in subscriber.modes:
+            self.privmsg(server, subscriber.nick, msg)
 
     def _check_if_new_and_if_so_add(self, server, nick):
         wrapper = self.db_wrapper.get(server)
         if not wrapper.find_nollan_with_nick(nick):
             wrapper.add_nollan(Nollan(nick=nick))
+            return True
+        else:
+            return False
 
     def _voice(self, server, target_nick, channel):
         self.mode(server, channel, '+v ' + target_nick)
@@ -127,9 +144,44 @@ class Anette(plugin.Plugin):
             for m in modes[1:]:
                 self.modes.remove(m)
 
+    def _strip_msg_of_prefix(self, msg, prefix):
+        return msg[len(prefix):].strip()
+
     def on_privmsg(self, server, source, target, message):
+        message = message.lower()
         if message == 'modes':
             self.send_modes(server, source)
+        elif message.startswith('subscribe status'):
+            self._subscribe_status(server, source, target, self._strip_msg_of_prefix(message, 'subscribe status'))
+        elif message.startswith('subscribe mode'):
+            self._subscribe_mode(server, source, target, self._strip_msg_of_prefix(message, 'subscribe mode'))
+
+    def _subscribe_status(self, server, source, target, command):
+        target_nick = self._nick(source)
+        available = Subscriber.available_statuses()
+        if command in available:
+            wrapper = self.db_wrapper[server]
+            wrapper.subscribe_status(target_nick, command)
+            self.privmsg(server, target_nick, 'Subscription status set to ' + command)
+        else:
+            self.privmsg(server, target_nick,
+                         'Invalid mode, only one the following are available: ' + ','.join(available))
+
+    def _subscribe_mode(self, server, source, target, command):
+        target_nick = self._nick(source)
+        available = Subscriber.available_modes()
+        parts = [p.strip() for p in command.split(' ')]
+        error_msg = 'Invalid command: should be add/remove [mode] where mode is ' + ','.join(available)
+        if len(parts) != 2:
+            self.privmsg(server, target_nick, error_msg)
+        else:
+            [op, mode] = parts
+            if mode in available and op in ['add', 'remove']:
+                wrapper = self.db_wrapper[server]
+                subscriber = wrapper.subscribe_mode(target_nick, op, mode)
+                self.privmsg(server, target_nick, 'Updated modes, now: ' + str(subscriber.modes))
+            else:
+                self.privmsg(server, target_nick, error_msg)
 
     def send_modes(self, server, target):
         self.privmsg(server, self._nick(target), str(self.modes))
