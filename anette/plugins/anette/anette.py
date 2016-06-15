@@ -13,7 +13,6 @@ class Anette(plugin.Plugin):
         plugin.Plugin.__init__(self, "anette")
         self.settings = {}
         self.is_ready = False
-        self.channel_modes = {}
         self.db_wrapper = {}
         self.nick = 'Anette'
         self.channels_pending_user_for_voicing = []
@@ -25,29 +24,18 @@ class Anette(plugin.Plugin):
         self.settings = json.loads(settings)
 
     def on_welcome(self, server, source, target, message):
-        self.channel_modes[server] = {}
-
-    def _add_channel_modes(self, server, channel, modes):
-        channel_modes = self.channel_modes.get(server).get(channel, [])
-        if modes.startswith('+'):
-            for m in modes[1:]:
-                channel_modes.append(m)
-        elif modes.startswith('-'):
-            for m in modes[1:]:
-                channel_modes.remove(m)
-
-        self.channel_modes[server][channel] = channel_modes
-
-    def on_mode(self, server, source, channel, modes, target):
-        if target == self.nick:
-            self._add_channel_modes(server, channel, modes)
-        elif '-v' in modes:
-            self._person_devoiced(server, target)
+        pass
 
     def _person_devoiced(self, server, nick):
+        logging.info('person devoiced: ' + nick)
         wrapper = self.db_wrapper.get(server)
         wrapper.set_nollan_fake(nick)
         wrapper.add_gamle(nick)
+
+    def _person_voiced(self, server, nick):
+        wrapper = self.db_wrapper.get(server)
+        wrapper.add_nollan(Nollan(nick=nick))
+        wrapper.remove_gamle_with_nick(nick)
 
     def on_join(self, server, source, channel):
         if not self.is_ready:
@@ -133,9 +121,15 @@ class Anette(plugin.Plugin):
             self._registered(server)
 
     def on_mode(self, server, source, channel, modes, target):
-        if target == self.nick:
+        target_nick = self._nick(target)
+        if target_nick == self.nick:
             if modes == '+h':
                 self._voice_previously_unvoiced_nollan(server, channel)
+        else:
+            if modes == '-v':
+                self._person_devoiced(server, target_nick)
+            elif modes == '+v':
+                self._person_voiced(server, target_nick)
 
     def _voice_previously_unvoiced_nollan(self, server, channel):
         logging.info('_voice_previously_unvoiced_nollan ' + channel)

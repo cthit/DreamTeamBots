@@ -30,6 +30,11 @@ class DBWrapper(object):
         res = self.nollan_table.get(NollanQuery.nick == nick)
         return Nollan.from_dict(res) if res else None
 
+    def remove_gamle_with_nick(self, nick):
+        gamle = self.find_gamle_with_nick(nick)
+        self.gamle_table.remove(eids=[gamle.eid])
+        self.gamle_table.all()
+
     def set_nollan_fake(self, nick):
         nollan = self.find_nollan_with_nick(nick)
         if nollan:
