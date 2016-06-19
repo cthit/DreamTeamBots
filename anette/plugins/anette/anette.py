@@ -7,6 +7,8 @@ from tinydb import TinyDB
 from dbwrapper import DBWrapper
 from nollan import Nollan
 from subscriber import Subscriber
+from anette_controller import AnetteController
+
 
 class Anette(plugin.Plugin):
 
@@ -15,9 +17,10 @@ class Anette(plugin.Plugin):
         self.settings = {}
         self.is_ready = False
         self.db_wrapper = {}
+        self.controllers = {}
         self.channels_pending_user_for_voicing = []
 
-    def _nick(self, target):
+    def nick_extract(self, target):
         return target.split('!')[0]
 
     def started(self, settings):
@@ -27,60 +30,15 @@ class Anette(plugin.Plugin):
     def on_welcome(self, server, source, target, message):
         pass
 
-    def _person_devoiced(self, server, nick):
-        logging.info('person devoiced: ' + nick)
-        wrapper = self.db_wrapper.get(server)
-        wrapper.set_nollan_fake(nick)
-        wrapper.add_gamble(nick)
-
-    def _person_voiced(self, server, nick):
-        wrapper = self.db_wrapper.get(server)
-        wrapper.add_nollan(Nollan(nick=nick))
-        wrapper.remove_gamble_with_nick(nick)
-
     def on_join(self, server, source, channel):
         if not self.is_ready:
             return
 
-        source_nick = self._nick(source)
+        source_nick = self.nick_extract(source)
         if (not self.nick == source_nick) and channel in self.channels_watching:
-            self._new_join(server, source_nick, channel)
+            self.controllers[server].new_join(server, source_nick, channel)
 
-    def _is_nollan(self, server, nick):
-        wrapper = self.db_wrapper.get(server)
-        if wrapper.find_gamble_with_nick(nick):
-            return False
-        else:
-            return True
-
-    def _new_join(self, server, source_nick, channel):
-        if self._is_nollan(server, source_nick):
-            self._voice(server, source_nick, channel)
-            is_new = self._check_if_new_and_if_so_add(server, source_nick)
-            self._notify_subscribers(server, source_nick, is_new)
-
-    def _notify_subscribers(self, server, nick, is_new):
-        subscriber_status = Subscriber.ON if is_new else Subscriber.ALL
-        wrapper = self.db_wrapper.get(server)
-        subscribers = wrapper.find_subscribers_with_status(subscriber_status)
-        msg = nick + ' joined.'
-        for subscriber in subscribers:
-            self._notify(server, subscriber, msg)
-            logging.info(msg + ' sent to ' + subscriber.nick)
-
-    def _notify(self, server, subscriber, msg):
-        if Subscriber.QUERY in subscriber.modes:
-            self.privmsg(server, subscriber.nick, msg)
-
-    def _check_if_new_and_if_so_add(self, server, nick):
-        wrapper = self.db_wrapper.get(server)
-        if not wrapper.find_nollan_with_nick(nick):
-            wrapper.add_nollan(Nollan(nick=nick))
-            return True
-        else:
-            return False
-
-    def _voice(self, server, target, channel):
+    def voice(self, server, target, channel):
         self.mode(server, channel, '+v ' + target)
 
     def _registered(self, server):
@@ -115,7 +73,9 @@ class Anette(plugin.Plugin):
             logging.info('DB initiated')
 
         if not self.db_wrapper.get(server):
-            self.db_wrapper[server] = DBWrapper(server, self.db)
+            wrapper = DBWrapper(server, self.db)
+            self.db_wrapper[server] = wrapper
+            self.controllers[server] = AnetteController(plugin=self, wrapper=wrapper)
             logging.info('DB wrapper initiated')
 
     def on_umode(self, server, source, target, modes):
@@ -124,20 +84,15 @@ class Anette(plugin.Plugin):
             self._registered(server)
 
     def on_mode(self, server, source, channel, modes, target):
-        target_nick = self._nick(target)
+        target_nick = self.nick_extract(target)
         if target_nick == self.nick:
             if modes == '+h':
-                self._voice_previously_unvoiced_nollan(server, channel)
+                self.controllers[server].voice_previously_unvoiced_nollan(server, channel)
         else:
             if modes == '-v':
-                self._person_devoiced(server, target_nick)
+                self.controllers[server].person_devoiced(server, target_nick)
             elif modes == '+v':
-                self._person_voiced(server, target_nick)
-
-    def _voice_previously_unvoiced_nollan(self, server, channel):
-        logging.info('_voice_previously_unvoiced_nollan ' + channel)
-        self.channels_pending_user_for_voicing.append(channel)
-        self.names(server, channel)
+                self.controllers[server].person_voiced(server, target_nick)
 
     def on_namreply(self, server, source, target, op, channel, names_with_modes):
         logging.info("on_names:" + channel)
@@ -154,9 +109,7 @@ class Anette(plugin.Plugin):
         except ValueError as e:
             pass
 
-        for nick in names:
-            if nick != self.nick and self._is_nollan(server, nick):
-                self._voice(server, nick, channel)
+        self.controllers[server].nicks_received(server, channel, names)
 
     def _strip_nick_of_mode(self, nick):
         for m in ['+', '%', '@', '&', '~']:
@@ -171,37 +124,11 @@ class Anette(plugin.Plugin):
     def on_privmsg(self, server, source, target, message):
         message = message.lower()
         if message.startswith('subscribe status'):
-            self._subscribe_status(server, source, target, self._strip_msg_of_prefix(message, 'subscribe status'))
+            self.controllers[server].subscribe_status(server, source, target, self._strip_msg_of_prefix(message, 'subscribe status'))
         elif message.startswith('subscribe mode'):
-            self._subscribe_mode(server, source, target, self._strip_msg_of_prefix(message, 'subscribe mode'))
-
-    def _subscribe_status(self, server, source, target, command):
-        target_nick = self._nick(source)
-        available = Subscriber.available_statuses()
-        if command in available:
-            wrapper = self.db_wrapper[server]
-            wrapper.subscribe_status(target_nick, command)
-            self.privmsg(server, target_nick, 'Subscription status set to ' + command)
-        else:
-            self.privmsg(server, target_nick,
-                         'Invalid mode, only one the following are available: ' + ','.join(available))
-
-    def _subscribe_mode(self, server, source, target, command):
-        target_nick = self._nick(source)
-        available = Subscriber.available_modes()
-        parts = [p.strip() for p in command.split(' ')]
-        error_msg = 'Invalid command: should be add/remove [mode] where mode is ' + ','.join(available)
-        if len(parts) != 2:
-            self.privmsg(server, target_nick, error_msg)
-        else:
-            [op, mode] = parts
-            if mode in available and op in ['add', 'remove']:
-                wrapper = self.db_wrapper[server]
-                subscriber = wrapper.subscribe_mode(target_nick, op, mode)
-                self.privmsg(server, target_nick, 'Updated modes, now: ' + str(subscriber.modes))
-            else:
-                self.privmsg(server, target_nick, error_msg)
-
+            self.controllers[server].subscribe_mode(server, source, target, self._strip_msg_of_prefix(message, 'subscribe mode'))
+        elif message.startswith('help'):
+            self.controllers[server].send_help(server, source, target, self._strip_msg_of_prefix(message, 'help'))
 
 if __name__ == "__main__":
     sys.exit(Anette.run())

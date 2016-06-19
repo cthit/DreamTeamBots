@@ -13,6 +13,9 @@ class SelfIdentifier(plugin.Plugin):
         self.modes = []
         self.channel_modes = {}
 
+    def nick_extract(self, target):
+        return target.split('!')[0]
+
     def started(self, settings):
         self.settings = json.loads(settings)
 
@@ -59,8 +62,8 @@ class SelfIdentifier(plugin.Plugin):
             self.send_modes(server, source)
 
     def send_modes(self, server, target):
-        self.privmsg(server, self._nick(target), str(self.modes))
-        self.privmsg(server, self._nick(target), str(self.channel_modes))
+        self.privmsg(server, self.nick_extract(target), str(self.modes))
+        self.privmsg(server, self.nick_extract(target), str(self.channel_modes))
 
 
 
