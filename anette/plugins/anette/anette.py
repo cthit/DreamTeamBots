@@ -18,6 +18,7 @@ class Anette(plugin.Plugin):
         self.is_ready = False
         self.db_wrapper = {}
         self.controllers = {}
+        self.channels_watching = {}
         self.channels_pending_user_for_voicing = []
 
     def nick_extract(self, target):
@@ -35,7 +36,7 @@ class Anette(plugin.Plugin):
             return
 
         source_nick = self.nick_extract(source)
-        if (not self.nick == source_nick) and channel in self.channels_watching:
+        if (not self.nick == source_nick) and channel in self.channels_watching.get(server, []):
             self.controllers[server].new_join(server, source_nick, channel)
 
     def voice(self, server, target, channel):
@@ -43,7 +44,7 @@ class Anette(plugin.Plugin):
 
     def _registered(self, server):
         channels = self.settings.get(server).get('channelstowatch')
-        self.channels_watching = channels
+        self.channels_watching[server] = channels
         self._setup_db(server)
         self._load_gamble(server)
         for chan in channels:
@@ -75,7 +76,7 @@ class Anette(plugin.Plugin):
         if not self.db_wrapper.get(server):
             wrapper = DBWrapper(server, self.db)
             self.db_wrapper[server] = wrapper
-            self.controllers[server] = AnetteController(plugin=self, wrapper=wrapper)
+            self.controllers[server] = AnetteController(plugin=self, wrapper=wrapper, server=server)
             logging.info('DB wrapper initiated')
 
     def on_umode(self, server, source, target, modes):

@@ -5,9 +5,10 @@ from subscriber import Subscriber
 
 class AnetteController(object):
 
-    def __init__(self, plugin, wrapper):
+    def __init__(self, plugin, wrapper, server):
         self.plugin = plugin
         self.wrapper = wrapper
+        self.server = server
 
     def _is_nollan(self, server, nick):
         if self.wrapper.find_gamble_with_nick(nick):
@@ -40,18 +41,22 @@ class AnetteController(object):
             if nick != self.plugin.nick and self._is_nollan(server, nick):
                 self.plugin.voice(server, nick, channel)
 
-    def voice_nollan(self, server, channel, nick):
-        self.plugin.voice(server, nick, channel)
-        self.wrapper.remove_gamble_with_nick(nick)
-        nollan = self.wrapper.find_nollan_with_nick(nick)
-        if not nollan:
-            self.wrapper.add_nollan(Nollan(nick=nick))
+    def voice_nollan(self, nick):
+        channels = self.plugin.channels_watching.get(self.server, [])
 
-    def devoice_gamble(self, server, channel, nick):
-        self.plugin.devoice(server, nick, channel)
-        self.wrapper.set_nollan_fake(nick)
-        self.wrapper.add_gamble(nick)
+        for c in channels:
+            self.plugin.voice(self.server, nick, c)
+            self.wrapper.remove_gamble_with_nick(nick)
+            nollan = self.wrapper.find_nollan_with_nick(nick)
+            if not nollan:
+                self.wrapper.add_nollan(Nollan(nick=nick))
 
+    def devoice_gamble(self, nick):
+        channels = self.plugin.channels_watching.get(self.server, [])
+        for c in channels:
+            self.plugin.devoice(self.server, nick, c)
+            self.wrapper.set_nollan_fake(nick)
+            self.wrapper.add_gamble(nick)
 
     def _notify_subscribers(self, server, nick, is_new):
         subscriber_status = Subscriber.ON if is_new else Subscriber.ALL
