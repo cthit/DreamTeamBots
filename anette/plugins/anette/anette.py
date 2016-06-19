@@ -30,12 +30,12 @@ class Anette(plugin.Plugin):
         logging.info('person devoiced: ' + nick)
         wrapper = self.db_wrapper.get(server)
         wrapper.set_nollan_fake(nick)
-        wrapper.add_gamle(nick)
+        wrapper.add_gamble(nick)
 
     def _person_voiced(self, server, nick):
         wrapper = self.db_wrapper.get(server)
         wrapper.add_nollan(Nollan(nick=nick))
-        wrapper.remove_gamle_with_nick(nick)
+        wrapper.remove_gamble_with_nick(nick)
 
     def on_join(self, server, source, channel):
         if not self.is_ready:
@@ -47,7 +47,7 @@ class Anette(plugin.Plugin):
 
     def _is_nollan(self, server, nick):
         wrapper = self.db_wrapper.get(server)
-        if wrapper.find_gamle_with_nick(nick):
+        if wrapper.find_gamble_with_nick(nick):
             return False
         else:
             return True
@@ -86,21 +86,21 @@ class Anette(plugin.Plugin):
         channels = self.settings.get(server).get('channelstowatch')
         self.channels_watching = channels
         self._setup_db(server)
-        self._load_gamle(server)
+        self._load_gamble(server)
         for chan in channels:
             self.join(server, chan)
 
         logging.info("Registered and ready")
         self.is_ready = True
 
-    def _load_gamle(self, server):
+    def _load_gamble(self, server):
         try:
-            file = open(self.settings.get(server).get('gamlefile'), 'r')
+            file = open(self.settings.get(server).get('gamblefile'), 'r')
             wrapper = self.db_wrapper.get(server)
             for l in file:
-                wrapper.add_gamle(l.strip())
+                wrapper.add_gamble(l.strip())
         except Exception as e:
-            logging.error("Failed to load gamlefile: " + self.settings.get(server).get('gamlefile'))
+            logging.error("Failed to load gamblefile: " + self.settings.get(server).get('gamblefile'))
 
     def _setup_db(self, server):
         logging.info("Setup DB for: " + server)
