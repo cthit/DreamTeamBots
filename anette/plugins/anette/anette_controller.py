@@ -45,6 +45,7 @@ class AnetteController(object):
         channels = self.plugin.channels_watching.get(self.server, [])
 
         for c in channels:
+            logging.info('voicing '+nick+' in '+c)
             self.plugin.voice(self.server, nick, c)
             self.wrapper.remove_gamble_with_nick(nick)
             nollan = self.wrapper.find_nollan_with_nick(nick)
@@ -54,6 +55,7 @@ class AnetteController(object):
     def devoice_gamble(self, nick):
         channels = self.plugin.channels_watching.get(self.server, [])
         for c in channels:
+            logging.info('devoicing '+nick+' in '+c)
             self.plugin.devoice(self.server, nick, c)
             self.wrapper.set_nollan_fake(nick)
             self.wrapper.add_gamble(nick)
@@ -76,6 +78,8 @@ class AnetteController(object):
             return True
         else:
             return False
+
+    # commands below
 
     def subscribe_status(self, server, source, target, command):
         target_nick = self.plugin.nick_extract(source)
@@ -102,6 +106,11 @@ class AnetteController(object):
             else:
                 self.plugin.privmsg(server, target_nick, error_msg)
 
-    def send_help(self, server, source, target, query):
+    def send_help(self, server, source, target, is_admin, command):
         target_nick = self.plugin.nick_extract(source)
-        self.plugin.privmsg(server, target_nick, 'derpiherp')
+        if not command.strip():
+            self.plugin.privmsg(server, target_nick, 'subscribe status [off|on|all]')
+            self.plugin.privmsg(server, target_nick, 'subscribe mode [query|push]')
+            if is_admin:
+                self.plugin.privmsg(server, target_nick, 'voice <nick>')
+                self.plugin.privmsg(server, target_nick, 'devoice <nick>')
