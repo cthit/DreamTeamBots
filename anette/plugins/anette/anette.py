@@ -138,6 +138,9 @@ class Anette(plugin.Plugin):
 
     def on_namreply(self, server, source, target, op, channel, names_with_modes):
         logging.info("on_names:" + channel)
+        if not self.is_ready:
+            return
+
         names = [self._strip_nick_of_mode(n.strip())
                  for n in names_with_modes.split(" ")
                  if len(n.strip()) > 0]
