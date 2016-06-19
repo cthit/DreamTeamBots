@@ -2,6 +2,7 @@ import json
 import sys
 import logging
 import plugin
+import os.path
 from tinydb import TinyDB
 from dbwrapper import DBWrapper
 from nollan import Nollan
@@ -14,7 +15,6 @@ class Anette(plugin.Plugin):
         self.settings = {}
         self.is_ready = False
         self.db_wrapper = {}
-        self.nick = 'Anette'
         self.channels_pending_user_for_voicing = []
 
     def _nick(self, target):
@@ -22,6 +22,7 @@ class Anette(plugin.Plugin):
 
     def started(self, settings):
         self.settings = json.loads(settings)
+        self.nick = self.settings.get('nickname')
 
     def on_welcome(self, server, source, target, message):
         pass
@@ -95,10 +96,12 @@ class Anette(plugin.Plugin):
 
     def _load_gamble(self, server):
         try:
-            file = open(self.settings.get(server).get('gamblefile'), 'r')
-            wrapper = self.db_wrapper.get(server)
-            for l in file:
-                wrapper.add_gamble(l.strip())
+            fname = self.settings.get(server).get('gamblefile')
+            if os.path.isfile(fname):
+                file = open(fname, 'r')
+                wrapper = self.db_wrapper.get(server)
+                for l in file:
+                    wrapper.add_gamble(l.strip())
         except Exception as e:
             logging.error("Failed to load gamblefile: " + self.settings.get(server).get('gamblefile'))
 
