@@ -13,8 +13,9 @@ class DBWrapper(object):
         self.subscriber_table = self.db.table(prefix+':subscriber')
 
     def add_nollan(self, nollan):
-        self.nollan_table.insert(nollan.to_dict())
-        self.nollan_table.all()
+        if not self.nollan_table.get(Query().nick == nollan.nick):
+            self.nollan_table.insert(nollan.to_dict())
+            self.nollan_table.all()
 
     def add_gamble(self, nick):
         if not self.gamble_table.get(Query().nick == nick):
@@ -46,16 +47,15 @@ class DBWrapper(object):
     def find_subscribers_with_status(self, status):
         SubscriberQuery = Query()
         res = self.subscriber_table.search(SubscriberQuery.status == status)
-
         return (Subscriber.from_dict(s) for s in res)
 
-    def _find_subscriber_with_nick(self, nick):
+    def find_subscriber_with_nick(self, nick):
         SubscriberQuery = Query()
         res = self.subscriber_table.get(SubscriberQuery.nick == nick)
         return Subscriber.from_dict(res) if res else None
 
     def subscribe_status(self, nick, status):
-        subscriber = self._find_subscriber_with_nick(nick)
+        subscriber = self.find_subscriber_with_nick(nick)
         if subscriber:
             subscriber.update_status(status)
         else:
@@ -70,7 +70,7 @@ class DBWrapper(object):
         return subscriber
 
     def subscribe_mode(self, nick, op, mode):
-        subscriber = self._find_subscriber_with_nick(nick)
+        subscriber = self.find_subscriber_with_nick(nick)
         if not subscriber:
             subscriber = Subscriber(nick, Subscriber.status_from_string('on'))
 

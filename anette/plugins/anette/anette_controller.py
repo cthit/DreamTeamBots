@@ -16,6 +16,12 @@ class AnetteController(object):
         else:
             return True
 
+    def is_gamble(self, nick):
+        if self.wrapper.find_gamble_with_nick(nick):
+            return True
+        else:
+            return False
+
     def new_join(self, server, source_nick, channel):
         if self._is_nollan(server, source_nick):
             self.plugin.voice(server, source_nick, channel)
@@ -84,33 +90,50 @@ class AnetteController(object):
     def subscribe_status(self, server, source, target, command):
         target_nick = self.plugin.nick_extract(source)
         available = Subscriber.available_statuses()
-        if command in available:
+        if not command:
+            subscriber = self.wrapper.find_subscriber_with_nick(self.plugin.nick_extract(source))
+            if subscriber:
+                self.plugin.privmsg(server, target_nick, 'current status: '\
+                                    + Subscriber.status_from_int(subscriber.status))
+            else:
+                self.plugin.privmsg(server, target_nick, 'no subscription')
+        elif command in available:
             self.wrapper.subscribe_status(target_nick, command)
-            self.plugin.privmsg(server, target_nick, 'Subscription status set to ' + command)
+            self.plugin.privmsg(server, target_nick, 'subscription status set to ' + command)
         else:
-            self.plugin.privmsg(server, target_nick,
-                         'Invalid mode, only one the following are available: ' + ','.join(available))
+            self.plugin.privmsg(server, target_nick, 'invalid command')
 
     def subscribe_mode(self, server, source, target, command):
         target_nick = self.plugin.nick_extract(source)
         available = Subscriber.available_modes()
         parts = [p.strip() for p in command.split(' ')]
-        error_msg = 'Invalid command: should be add/remove [mode] where mode is ' + ','.join(available)
-        if len(parts) != 2:
-            self.plugin.privmsg(server, target_nick, error_msg)
-        else:
+        error_msg = 'invalid command'
+        if not parts:
+            subscriber = self.wrapper.find_subscriber_with_nick(target_nick)
+            if subscriber:
+                self.plugin.privmsg(server, target_nick, 'current modes: ' + str(subscriber.modes))
+            else:
+                self.plugin.privmsg(server, target_nick, 'no subscription')
+        elif len(parts) == 2:
             [op, mode] = parts
             if mode in available and op in ['add', 'remove']:
                 subscriber = self.wrapper.subscribe_mode(target_nick, op, mode)
-                self.plugin.privmsg(server, target_nick, 'Updated modes, now: ' + str(subscriber.modes))
+                self.plugin.privmsg(server, target_nick, 'updated modes, now: ' + str(subscriber.modes))
             else:
                 self.plugin.privmsg(server, target_nick, error_msg)
+        else:
+            self.plugin.privmsg(server, target_nick, error_msg)
 
     def send_help(self, server, source, target, is_admin, command):
         target_nick = self.plugin.nick_extract(source)
-        if not command.strip():
+        if not command:
             self.plugin.privmsg(server, target_nick, 'subscribe status [off|on|all]')
-            self.plugin.privmsg(server, target_nick, 'subscribe mode [query|push]')
             if is_admin:
                 self.plugin.privmsg(server, target_nick, 'voice <nick>')
                 self.plugin.privmsg(server, target_nick, 'devoice <nick>')
+        elif command == 'subscribe' or command == 'subscribe status':
+            self.plugin.privmsg(server, target_nick, 'subscribe status [off|on|all]')
+            self.plugin.privmsg(server, target_nick, 'off = no subscription')
+            self.plugin.privmsg(server, target_nick, 'on  = ping first time nollan joins')
+            self.plugin.privmsg(server, target_nick, 'all = ping every time nollan joins')
+            self.plugin.privmsg(server, target_nick, 'leave empty for current status')

@@ -129,24 +129,26 @@ class Anette(plugin.Plugin):
         nick = self.nick_extract(source)
         return nick.lower() in self.settings.get(server).get('admins')
 
+    def _is_gamble(self, server, source):
+        nick = self.nick_extract(source)
+        return self.controllers[server].is_gamble(nick.lower())
+
     def on_privmsg(self, server, source, target, message):
-        message = message.lower()
-        if message.startswith('subscribe status'):
-            self.controllers[server]\
-                .subscribe_status(server, source, target, self._strip_msg_of_prefix(message, 'subscribe status'))
-        elif message.startswith('subscribe mode'):
-            self.controllers[server]\
-                .subscribe_mode(server, source, target, self._strip_msg_of_prefix(message, 'subscribe mode'))
-        elif message.startswith('help'):
-            self.controllers[server]\
-                .send_help(server, source, target, self._is_admin(server, source),
-                           self._strip_msg_of_prefix(message, 'help'))
-        elif message.startswith('voice') and self._is_admin(server, source):
-            self.controllers[server]\
-                .voice_nollan(self._strip_msg_of_prefix(message, 'voice'))
-        elif message.startswith('devoice') and self._is_admin(server, source):
-            self.controllers[server]\
-                .devoice_gamble(self._strip_msg_of_prefix(message, 'devoice'))
+        if self._is_gamble(server, source):
+            message = message.lower()
+            if message.startswith('subscribe status'):
+                self.controllers[server]\
+                    .subscribe_status(server, source, target, self._strip_msg_of_prefix(message, 'subscribe status'))
+            elif message.startswith('help'):
+                self.controllers[server]\
+                    .send_help(server, source, target, self._is_admin(server, source),
+                               self._strip_msg_of_prefix(message, 'help'))
+            elif message.startswith('voice') and self._is_admin(server, source):
+                self.controllers[server]\
+                    .voice_nollan(self._strip_msg_of_prefix(message, 'voice'))
+            elif message.startswith('devoice') and self._is_admin(server, source):
+                self.controllers[server]\
+                    .devoice_gamble(self._strip_msg_of_prefix(message, 'devoice'))
 
 if __name__ == "__main__":
     sys.exit(Anette.run())

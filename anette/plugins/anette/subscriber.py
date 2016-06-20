@@ -8,14 +8,6 @@ class Subscriber(object):
     ON = 1
     ALL = 2
 
-    STATUSES = {
-        "off": OFF,
-        "on": ON,
-        "all": ALL
-
-    }
-
-    PUSH = 'push'
     QUERY = 'query'
 
     def __init__(self, nick, status):
@@ -39,31 +31,47 @@ class Subscriber(object):
 
     @staticmethod
     def status_from_string(string):
-        status = Subscriber.STATUSES.get(string)
-        if status:
-            return status
+        if string == 'off':
+            return Subscriber.OFF
+        elif string == 'on':
+            return  Subscriber.ON
+        elif string == 'all':
+            return Subscriber.ALL
+        else:
+            raise ValueError('No such status %r' % string)
+
+    @staticmethod
+    def status_from_int(i):
+        if i == Subscriber.OFF:
+            return 'off'
+        elif i == Subscriber.ON:
+            return 'on'
+        elif i == Subscriber.ALL:
+            return 'all'
         else:
             raise ValueError('No such status')
 
     @staticmethod
     def available_statuses():
-        return Subscriber.STATUSES.keys()
+        return ['off', 'on', 'all']
 
     @staticmethod
     def available_modes():
-        return [Subscriber.QUERY, Subscriber.PUSH]
+        return [Subscriber.QUERY]
 
     def renick(self, new_nick):
         self.nick = new_nick
 
-    def update_status(self, status):
+    def update_status(self, status_string):
+        logging.info("status_string: %r" % status_string)
+        status = Subscriber.status_from_string(status_string)
         if status in [Subscriber.OFF, Subscriber.ON, Subscriber.ALL]:
             self.status = status
         else:
             logging.warning("Invalid status %r" % status)
 
     def add_subscription_mode(self, mode):
-        if mode in [Subscriber.PUSH, Subscriber.QUERY]:
+        if mode in Subscriber.available_modes():
             if mode not in self.modes:
                 self.modes.append(mode)
         else:
@@ -74,6 +82,3 @@ class Subscriber(object):
             self.modes.remove(mode)
         except ValueError as e:
             pass
-
-
-
