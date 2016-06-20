@@ -84,8 +84,8 @@ class AnetteController(object):
         pb = self.plugin.pushbullets.get(server)
         if is_new:
             pb.push_to_tag('anette_new', msg, datetime.now().isoformat())
-        else:
-            pb.push_to_tag('anette_all', msg, datetime.now().isoformat())
+
+        pb.push_to_tag('anette_all', msg, datetime.now().isoformat())
 
     def _check_if_new_and_if_so_add(self, server, nick):
         if not self.wrapper.find_nollan_with_nick(nick):
