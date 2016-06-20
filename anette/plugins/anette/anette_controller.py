@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 from nollan import Nollan
 from subscriber import Subscriber
 
@@ -20,7 +21,7 @@ class AnetteController(object):
         if self._is_nollan(server, source_nick):
             self.plugin.voice(server, source_nick, channel)
             is_new = self._check_if_new_and_if_so_add(server, source_nick)
-            self._notify_subscribers(server, source_nick, is_new)
+            self._notify_subscribers(server, channel, source_nick, is_new)
 
     def person_devoiced(self, server, nick):
         logging.info('person devoiced: ' + nick)
@@ -60,10 +61,11 @@ class AnetteController(object):
             self.wrapper.set_nollan_fake(nick)
             self.wrapper.add_gamble(nick)
 
-    def _notify_subscribers(self, server, nick, is_new):
+    def _notify_subscribers(self, server, channel, nick, is_new):
         subscriber_status = Subscriber.ON if is_new else Subscriber.ALL
         subscribers = self.wrapper.find_subscribers_with_status(subscriber_status)
-        msg = nick + ' joined.'
+        msg = nick + ' joined ' + channel
+        self._send_pushbullet_notificaiton(server, msg, is_new)
         for subscriber in subscribers:
             self._notify(server, subscriber, msg)
             logging.info(msg + ' sent to ' + subscriber.nick)
@@ -71,6 +73,13 @@ class AnetteController(object):
     def _notify(self, server, subscriber, msg):
         if Subscriber.QUERY in subscriber.modes:
             self.plugin.privmsg(server, subscriber.nick, msg)
+
+    def _send_pushbullet_notificaiton(self, server, msg, is_new):
+        pb = self.plugin.pushbullets.get(server)
+        if is_new:
+            pb.push_to_tag('anette_new', msg, datetime.now().isoformat())
+        else:
+            pb.push_to_tag('anette_all', msg, datetime.now().isoformat())
 
     def _check_if_new_and_if_so_add(self, server, nick):
         if not self.wrapper.find_nollan_with_nick(nick):

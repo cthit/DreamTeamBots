@@ -8,7 +8,7 @@ from dbwrapper import DBWrapper
 from nollan import Nollan
 from subscriber import Subscriber
 from anette_controller import AnetteController
-
+from pushbullet_service import PushbulletService
 
 class Anette(plugin.Plugin):
 
@@ -19,6 +19,7 @@ class Anette(plugin.Plugin):
         self.db_wrapper = {}
         self.controllers = {}
         self.channels_watching = {}
+        self.pushbullets = {}
         self.channels_pending_user_for_voicing = []
 
     def nick_extract(self, target):
@@ -50,6 +51,7 @@ class Anette(plugin.Plugin):
         self.channels_watching[server] = channels
         self._setup_db(server)
         self._load_gamble(server)
+        self._setup_pushbullet(server)
         for chan in channels:
             self.join(server, chan)
 
@@ -69,7 +71,6 @@ class Anette(plugin.Plugin):
 
     def _setup_db(self, server):
         logging.info("Setup DB for: " + server)
-        logging.info(self.db)
         if not self.is_ready:
             db_path = self.settings.get('db_path', '') + 'anette_db.json'
             logging.info("DB path:" + db_path)
@@ -81,6 +82,10 @@ class Anette(plugin.Plugin):
             self.db_wrapper[server] = wrapper
             self.controllers[server] = AnetteController(plugin=self, wrapper=wrapper, server=server)
             logging.info('DB wrapper initiated')
+
+    def _setup_pushbullet(self, server):
+        pushbullet_settings = self.settings.get(server).get("pushbullet")
+        self.pushbullets[server] = PushbulletService(access_token=pushbullet_settings.get("access_token"), tags=pushbullet_settings.get("tags"))
 
     def on_umode(self, server, source, target, modes):
         logging.info('on_umode: ' + modes)
