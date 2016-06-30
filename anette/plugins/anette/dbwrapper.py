@@ -44,10 +44,12 @@ class DBWrapper(object):
             self.nollan_table.update(nollan.to_dict(), eids=[nollan.eid])
             self.nollan_table.all()
 
-    def find_subscribers_with_status(self, status):
+    def find_subscribers_with_statuses(self, statuses):
         SubscriberQuery = Query()
-        res = self.subscriber_table.search(SubscriberQuery.status == status)
-        return (Subscriber.from_dict(s) for s in res)
+        res = []
+        for status in statuses:
+            res.extend(self.subscriber_table.search(SubscriberQuery.status == status))
+        return [Subscriber.from_dict(s) for s in res]
 
     def find_subscriber_with_nick(self, nick):
         SubscriberQuery = Query()
