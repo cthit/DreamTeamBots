@@ -147,6 +147,10 @@ class AnetteController(object):
         target_nick = self.plugin.nick_extract(source)
         if not command:
             self.plugin.privmsg(server, target_nick, 'subscribe status [off|on|all]')
+            self.plugin.privmsg(server, target_nick, 'subscribe to new nollan via pushbullet: ' +
+                                                     'https://www.pushbullet.com/channel?tag=anette_new')
+            self.plugin.privmsg(server, target_nick, 'subscribe to all nollan via pushbullet: ' +
+                                                     'https://www.pushbullet.com/channel?tag=anette_all')
             if is_admin:
                 self.plugin.privmsg(server, target_nick, 'voice <nick>')
                 self.plugin.privmsg(server, target_nick, 'devoice <nick>')
