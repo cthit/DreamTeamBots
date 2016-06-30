@@ -37,13 +37,16 @@ class Anette(plugin.Plugin):
             return
 
         source_nick = self.nick_extract(source)
+        logging.info(source_nick + ' joined ' + channel)
         if (not self.nick == source_nick) and channel in self.channels_watching.get(server, []):
             self.controllers[server].new_join(server, source_nick, channel)
 
     def voice(self, server, target, channel):
+        logging.info('voicing ' + target + ' in ' + channel)
         self.mode(server, channel, '+v ' + target)
 
     def devoice(self, server, target, channel):
+        logging.info('devoicing ' + target + ' in ' + channel)
         self.mode(server, channel, '-v ' + target)
 
     def _registered(self, server):
@@ -62,12 +65,14 @@ class Anette(plugin.Plugin):
         try:
             fname = self.settings.get(server).get('gamblefile')
             if os.path.isfile(fname):
+                logging.info('opening gamble file')
                 file = open(fname, 'r')
                 wrapper = self.db_wrapper.get(server)
                 for l in file:
                     wrapper.add_gamble(l.strip())
+                    logging.info('added ' + l.strip() + ' to gamble')
         except Exception as e:
-            logging.error("Failed to load gamblefile: " + self.settings.get(server).get('gamblefile'))
+            logging.error("Failed to load gamble file: " + self.settings.get(server).get('gamblefile'))
 
     def _setup_db(self, server):
         logging.info("Setup DB for: " + server)
@@ -85,7 +90,8 @@ class Anette(plugin.Plugin):
 
     def _setup_pushbullet(self, server):
         pushbullet_settings = self.settings.get(server).get("pushbullet")
-        self.pushbullets[server] = PushbulletService(access_token=pushbullet_settings.get("access_token"), tags=pushbullet_settings.get("tags"))
+        self.pushbullets[server] = PushbulletService(access_token=pushbullet_settings.get("access_token"),
+                                                     tags=pushbullet_settings.get("tags"))
 
     def on_umode(self, server, source, target, modes):
         logging.info('on_umode: ' + modes)
@@ -96,6 +102,7 @@ class Anette(plugin.Plugin):
         target_nick = self.nick_extract(target)
         if target_nick == self.nick:
             if modes == '+h':
+                logging.info('acquired +h')
                 self.controllers[server].voice_previously_unvoiced_nollan(server, channel)
         else:
             if modes == '-v':
@@ -144,6 +151,8 @@ class Anette(plugin.Plugin):
             if message.startswith('subscribe status'):
                 self.controllers[server]\
                     .subscribe_status(server, source, target, self._strip_msg_of_prefix(message, 'subscribe status'))
+            elif message.startswith('subscribe'):
+                self.privmsg(server, self.nick_extract(source), 'did you mean "subscribe status"?')
             elif message.startswith('help'):
                 self.controllers[server]\
                     .send_help(server, source, target, self._is_admin(server, source),
@@ -154,6 +163,9 @@ class Anette(plugin.Plugin):
             elif message.startswith('devoice') and self._is_admin(server, source):
                 self.controllers[server]\
                     .devoice_gamble(self._strip_msg_of_prefix(message, 'devoice'))
+            elif message.startswith('join') and self._is_admin(server, source):
+                self.controllers[server]\
+                    .join_channel(server, source, self._strip_msg_of_prefix(message, 'join'))
 
 if __name__ == "__main__":
     sys.exit(Anette.run())

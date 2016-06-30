@@ -68,13 +68,13 @@ class AnetteController(object):
             self.wrapper.add_gamble(nick)
 
     def _notify_subscribers(self, server, channel, nick, is_new):
-        subscriber_status = Subscriber.ON if is_new else Subscriber.ALL
-        subscribers = self.wrapper.find_subscribers_with_status(subscriber_status)
+        subscriber_statuses = [Subscriber.ON, Subscriber.ALL] if is_new else [Subscriber.ALL]
+        subscribers = self.wrapper.find_subscribers_with_statuses(subscriber_statuses)
         msg = nick + ' joined ' + channel
         self._send_pushbullet_notificaiton(server, msg, is_new)
         for subscriber in subscribers:
             self._notify(server, subscriber, msg)
-            logging.info(msg + ' sent to ' + subscriber.nick)
+            logging.info('"' + msg + '" sent to ' + subscriber.nick)
 
     def _notify(self, server, subscriber, msg):
         if Subscriber.QUERY in subscriber.modes:
@@ -133,6 +133,16 @@ class AnetteController(object):
         else:
             self.plugin.privmsg(server, target_nick, error_msg)
 
+    def join_channel(self, server, source, chan):
+        parts = [p.strip() for p in chan.split(' ')]
+        if len(parts) != 1 or not chan.startswith('#'):
+            self.plugin.privmsg(server, self.plugin.nick_extract(source), 'no such channel: ' + chan)
+        else:
+            if chan not in self.plugin.channels_watching[server]:
+                self.plugin.channels_watching[server].append(chan)
+            logging.info('channels to watch: ' + str(self.plugin.channels_watching[server]))
+            self.plugin.join(server, chan)
+
     def send_help(self, server, source, target, is_admin, command):
         target_nick = self.plugin.nick_extract(source)
         if not command:
@@ -140,6 +150,7 @@ class AnetteController(object):
             if is_admin:
                 self.plugin.privmsg(server, target_nick, 'voice <nick>')
                 self.plugin.privmsg(server, target_nick, 'devoice <nick>')
+                self.plugin.privmsg(server, target_nick, 'join <channel>')
         elif command == 'subscribe' or command == 'subscribe status':
             self.plugin.privmsg(server, target_nick, 'subscribe status [off|on|all]')
             self.plugin.privmsg(server, target_nick, 'off = no subscription')
