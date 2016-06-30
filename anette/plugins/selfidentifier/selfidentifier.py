@@ -1,5 +1,6 @@
 import json
 import sys
+import logging
 
 import plugin
 
@@ -58,13 +59,11 @@ class SelfIdentifier(plugin.Plugin):
 
     def on_privmsg(self, server, source, target, message):
         if message == 'modes':
-            print("modes")
             self.send_modes(server, source)
 
     def send_modes(self, server, target):
         self.privmsg(server, self.nick_extract(target), str(self.modes))
         self.privmsg(server, self.nick_extract(target), str(self.channel_modes))
-
 
 
 if __name__ == "__main__":
