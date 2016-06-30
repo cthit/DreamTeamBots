@@ -1,3 +1,3 @@
-[submodule "anette/shrimp"]
-	path = anette/shrimp
+[submodule "shrimp"]
+	path = shrimp
 	url = git@github.com:Tigge/platinumshrimp.git
