@@ -1,0 +1,3 @@
+[submodule "shrimp"]
+	path = shrimp
+	url = https://github.com/Tigge/platinumshrimp

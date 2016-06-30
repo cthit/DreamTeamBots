@@ -2,7 +2,7 @@ import json
 import sys
 import logging
 import plugin
-
+import datetime
 
 class Bojo(plugin.Plugin):
 
@@ -30,6 +30,8 @@ class Bojo(plugin.Plugin):
     def _registered(self, server):
         channels = self.settings.get(server).get('channelstowatch')
         self.channels_watching[server] = channels
+        for channel in channels:
+            self.join(server, channel)
 
     def on_mode(self, server, source, channel, modes, target):
         target = target.lower()
@@ -38,13 +40,19 @@ class Bojo(plugin.Plugin):
                 server_channels_map = self.is_ready.get(server, {})
                 server_channels_map[channel] = True
                 self.is_ready[server] = server_channels_map
-
-    def perform(self, server, channel):
-        self.topic(server, channel)
+                self.topic(server, channel)
 
     def on_currenttopic(self, server, source, target, channel, topic):
         if channel in self.settings.get(server).get('channelstowatch') and self.is_ready.get(server, {}).get(channel):
             logging.info("currenttopic " + channel + " " + topic)
+            prefix = self.settings.get(server).get("countdownprefix")
+            countdown_str = self.settings.get(server).get("countdowndate")
+            countdown = datetime.datetime.strptime(countdown_str, "%Y-%m-%d").date()
+            if not prefix in topic:
+                now = datetime.datetime.now().date()
+                days_left = (countdown - now).days
+                self.topic(server, channel, prefix + " " + str(days_left))
+
 
     def on_privmsg(self, server, source, target, message):
         logging.info("privmessagederp")
