@@ -23,7 +23,7 @@ class Anette(plugin.Plugin):
         self.channels_pending_user_for_voicing = []
 
     def nick_extract(self, target):
-        return target.split('!')[0]
+        return target.split('!')[0].lower()
 
     def started(self, settings):
         self.settings = json.loads(settings)
@@ -62,6 +62,7 @@ class Anette(plugin.Plugin):
         self.is_ready = True
 
     def _load_gamble(self, server):
+        logging.info('loading gamble')
         try:
             fname = self.settings.get(server).get('gamblefile')
             if os.path.isfile(fname):
@@ -69,8 +70,10 @@ class Anette(plugin.Plugin):
                 file = open(fname, 'r')
                 wrapper = self.db_wrapper.get(server)
                 for l in file:
-                    wrapper.add_gamble(l.strip())
-                    logging.info('added ' + l.strip() + ' to gamble')
+                    gamble = l.strip()
+                    if gamble:
+                        wrapper.add_gamble(gamble)
+                        logging.info('added ' + gamble + ' to gamble')
         except Exception as e:
             logging.error("Failed to load gamble file: " + self.settings.get(server).get('gamblefile'))
 
@@ -115,7 +118,7 @@ class Anette(plugin.Plugin):
         if not self.is_ready:
             return
 
-        names = [self._strip_nick_of_mode(n.strip())
+        names = [self._strip_nick_of_mode(n.strip()).lower()
                  for n in names_with_modes.split(" ")
                  if len(n.strip()) > 0]
         logging.info(names)
@@ -146,7 +149,10 @@ class Anette(plugin.Plugin):
         return self.controllers[server].is_gamble(nick.lower())
 
     def on_privmsg(self, server, source, target, message):
+        source_nick = self.nick_extract(source)
+        logging.info('received msg from ' + source_nick + ': ' + message)
         if self._is_gamble(server, source):
+            logging.info(source_nick + ' is gamble')
             message = message.lower()
             if message.startswith('subscribe status'):
                 self.controllers[server]\
