@@ -44,9 +44,13 @@ class AnetteController(object):
         self.plugin.names(server, channel)
 
     def nicks_received(self, server, channel, nicks):
+        logging.info('nicks received: ' + str(nicks))
         for nick in nicks:
-            if nick != self.plugin.nick and self._is_nollan(server, nick):
+            if self._is_nollan(server, nick):
+                logging.info(nick + ' is nollan')
                 self.plugin.voice(server, nick, channel)
+            else:
+                logging.info(nick + ' is gamble')
 
     def voice_nollan(self, nick):
         channels = self.plugin.channels_watching.get(self.server, [])
@@ -145,6 +149,7 @@ class AnetteController(object):
 
     def send_help(self, server, source, target, is_admin, command):
         target_nick = self.plugin.nick_extract(source)
+        logging.info('sending help to ' + target_nick)
         if not command:
             self.plugin.privmsg(server, target_nick, 'subscribe status [off|on|all]')
             self.plugin.privmsg(server, target_nick, 'subscribe to new nollan via pushbullet: ' +
