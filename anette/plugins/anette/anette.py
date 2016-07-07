@@ -101,17 +101,33 @@ class Anette(plugin.Plugin):
         if modes == '+r':
             self._registered(server)
 
-    def on_mode(self, server, source, channel, modes, target):
-        target_nick = self.nick_extract(target)
-        if target_nick == self.nick:
-            if modes == '+h':
+    def on_mode(self, server, source, channel, modes, *targets):
+        logging.info('mode change ' + modes + ' ' + str(targets))
+        user_modes = ['q', 'a', 'o', 'h', 'v', 'b']
+        ti = 0
+        adding = True
+        for i in range(0, len(modes)):
+            mode = modes[i]
+            if mode == '+':
+                adding = True
+            elif mode == '-':
+                adding = False
+            else:
+                if mode in user_modes:
+                    target = targets[ti].lower()
+                    ti += 1
+                    self._handle_mode_change(adding, channel, mode, server, target)
+
+    def _handle_mode_change(self, adding, channel, mode, server, target):
+        if target == self.nick.lower():
+            if mode == 'h' and adding:
                 logging.info('acquired +h')
                 self.controllers[server].voice_previously_unvoiced_nollan(server, channel)
         else:
-            if modes == '-v':
-                self.controllers[server].person_devoiced(server, target_nick)
-            elif modes == '+v':
-                self.controllers[server].person_voiced(server, target_nick)
+            if mode == 'v' and not adding:
+                self.controllers[server].person_devoiced(server, target)
+            elif mode == 'v' and adding:
+                self.controllers[server].person_voiced(server, target)
 
     def on_namreply(self, server, source, target, op, channel, names_with_modes):
         logging.info("on_names:" + channel)

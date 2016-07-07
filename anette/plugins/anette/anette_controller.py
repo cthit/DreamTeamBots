@@ -35,6 +35,7 @@ class AnetteController(object):
         self.wrapper.add_gamble(nick)
 
     def person_voiced(self, server, nick):
+        logging.info('person voiced: ' + nick)
         self.wrapper.add_nollan(Nollan(nick=nick))
         self.wrapper.remove_gamble_with_nick(nick)
 
