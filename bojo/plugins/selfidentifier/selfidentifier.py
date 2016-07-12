@@ -7,14 +7,19 @@ import plugin
 class SelfIdentifier(plugin.Plugin):
 
     def __init__(self):
-        plugin.Plugin.__init__(self, "SelfIdentifier")
+        plugin.Plugin.__init__(self, "selfidentifier")
         self.settings = {}
         self.is_registering = False
         self.modes = []
         self.channel_modes = {}
+        self.nick = ''
+
+    def nick_extract(self, target):
+        return target.split('!')[0]
 
     def started(self, settings):
         self.settings = json.loads(settings)
+        self.nick = self.settings.get('nickname')
 
     def on_welcome(self, server, source, target, message):
         self.channel_modes[server] = {}
@@ -41,7 +46,7 @@ class SelfIdentifier(plugin.Plugin):
 
     def _registered(self, server):
         self.is_registering = False
-        channels = self.settings.get(server).get('channelstowatch')
+        channels = self.settings.get(server).get('channelstowatch', [])
         self.channels_watching = channels
         for chan in channels:
             self.join(server, chan)
@@ -59,12 +64,11 @@ class SelfIdentifier(plugin.Plugin):
 
     def on_privmsg(self, server, source, target, message):
         if message == 'modes':
-            print("modes")
             self.send_modes(server, source)
 
     def send_modes(self, server, target):
-        self.privmsg(server, self._nick(target), str(self.modes))
-        self.privmsg(server, self._nick(target), str(self.channel_modes))
+        self.privmsg(server, self.nick_extract(target), str(self.modes))
+        self.privmsg(server, self.nick_extract(target), str(self.channel_modes.get(server, {})))
 
 
 
